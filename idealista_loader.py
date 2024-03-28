@@ -78,16 +78,22 @@ def create_avro_schema(input_schema):
         avro_schema["fields"].append(field_schema)
     return avro_schema
 
-def make_idealista_avro(idealista_path='/Users/danilakokin/Desktop/UPC/Semester2/BDM/data'):
-    merged_jsons = merge_jsons('{}/idealista'.format(idealista_path))
-    out = get_complete_json_schema(merged_jsons)
-    parsed_schema = parse_schema(create_avro_schema(out))
-    json_data = merged_jsons
-
-    avro_dir = os.path.join(idealista_path, 'avro')
+def json_to_avro(json_data, avro_schema, data_path, filename):
+    parsed_schema = parse_schema(avro_schema)
+    avro_dir = os.path.join(data_path, 'avro')
     os.makedirs(avro_dir, exist_ok=True)
-
-    avro_file_path = os.path.join(avro_dir, 'idealista.avro')
+    avro_file_path = os.path.join(avro_dir, f'{filename}.avro')
 
     with open(avro_file_path, 'wb') as out:
         writer(out, parsed_schema, json_data)
+
+def make_idealista_avro(data_path, filename='idealista'):
+    avro_file_path = os.path.join(data_path, 'avro', f'{filename}.avro')
+
+    if os.path.exists(avro_file_path):
+        os.remove(avro_file_path)
+
+    merged_jsons = merge_jsons(os.path.join(data_path, filename))
+    complete_json_schema = get_complete_json_schema(merged_jsons)
+    avro_schema = create_avro_schema(complete_json_schema)
+    json_to_avro(merged_jsons, avro_schema, data_path, filename)
