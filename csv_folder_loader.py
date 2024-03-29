@@ -43,7 +43,7 @@ def infer_avro_type(value):
     else:
         return 'string'
 
-def generate_avro_schema_from_csv(df, name):
+def generate_avro_schema_from_df(df, name):
     schema = {
         'type': 'record',
         'name': name,
@@ -104,7 +104,7 @@ def make_opendatabcn_avro(data_path, name='opendatabcn-income'):
 
     combined_df = reconcile_schemas(existing_df, new_combined_df)
 
-    avro_schema = generate_avro_schema_from_csv(combined_df, name)
+    avro_schema = generate_avro_schema_from_df(combined_df, name)
     dataframe_to_avro(combined_df, avro_schema, data_path, name)
 
 
