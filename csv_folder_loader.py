@@ -96,7 +96,8 @@ def reconcile_schemas(existing_df, new_df):
 def make_opendatabcn_avro(data_path, name='opendatabcn-income'):
     avro_dir = os.path.join(data_path, 'avro')
     os.makedirs(avro_dir, exist_ok=True)
-    avro_file_path = os.path.join(avro_dir, f'{name}.avro')
+    formatted_name = name.replace('-', '')
+    avro_file_path = os.path.join(avro_dir, f'{formatted_name}.avro')
 
     existing_df = read_avro_to_dataframe(avro_file_path)
     empty_df = make_empty_df(os.path.join(data_path, name))
@@ -104,8 +105,8 @@ def make_opendatabcn_avro(data_path, name='opendatabcn-income'):
 
     combined_df = reconcile_schemas(existing_df, new_combined_df)
 
-    avro_schema = generate_avro_schema_from_df(combined_df, name)
-    dataframe_to_avro(combined_df, avro_schema, data_path, name)
+    avro_schema = generate_avro_schema_from_df(combined_df, formatted_name)
+    dataframe_to_avro(combined_df, avro_schema, data_path, formatted_name)
 
 
 

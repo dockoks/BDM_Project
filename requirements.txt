@@ -1,2 +1,11 @@
 fastavro
 pandas
+selenium
+webdriver-manager
+bs4
+requests
+hdfs
+avro
+pywebhdfs
+happybase
+setuptools
