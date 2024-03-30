@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import numpy as np
 from fastavro import writer, parse_schema, reader
+import logging
 
 pd.set_option('future.no_silent_downcasting', True)
 
@@ -18,7 +19,6 @@ def make_empty_df(filepath):
 
 # Process each CSV file
 def process_csvs(filepath, combined_df):
-    combined_df
     for filename in os.listdir(filepath):
         if filename.endswith('.csv'):
             df = pd.read_csv(os.path.join(filepath, filename), encoding='utf-8')
@@ -66,15 +66,19 @@ def generate_avro_schema_from_df(df, name):
 
     return schema
 
-def dataframe_to_avro(df, avro_schema, data_path, filename):
-    parsed_schema = parse_schema(avro_schema)
-    records = df.to_dict(orient='records')
-    avro_dir = os.path.join(data_path, 'avro')
-    os.makedirs(avro_dir, exist_ok=True)
-    avro_file_path = os.path.join(avro_dir, f'{filename}.avro')
+def write_dataframe_to_avro(df, schema, data_path, filename):
+    try:
+        avro_dir = os.path.join(data_path, 'avro')
+        os.makedirs(avro_dir, exist_ok=True)
 
-    with open(avro_file_path, 'wb') as out:
-        writer(out, parsed_schema, records)
+        formatted_name = filename.replace('-', '_')
+        avro_file_path = os.path.join(avro_dir, f'{formatted_name}.avro')
+
+        parsed_schema = parse_schema(schema)
+        with open(avro_file_path, 'wb') as out:
+            writer(out, parsed_schema, df.to_dict('records'))
+    except Exception as e:
+        logging.error(f"Error writing {filename} to Avro: {e}")
 
 def read_avro_to_dataframe(avro_file_path):
     if not os.path.exists(avro_file_path):
@@ -96,7 +100,7 @@ def reconcile_schemas(existing_df, new_df):
 def make_opendatabcn_avro(data_path, name='opendatabcn-income'):
     avro_dir = os.path.join(data_path, 'avro')
     os.makedirs(avro_dir, exist_ok=True)
-    formatted_name = name.replace('-', '')
+    formatted_name = name.replace('-', '_')
     avro_file_path = os.path.join(avro_dir, f'{formatted_name}.avro')
 
     existing_df = read_avro_to_dataframe(avro_file_path)
@@ -106,8 +110,4 @@ def make_opendatabcn_avro(data_path, name='opendatabcn-income'):
     combined_df = reconcile_schemas(existing_df, new_combined_df)
 
     avro_schema = generate_avro_schema_from_df(combined_df, formatted_name)
-    dataframe_to_avro(combined_df, avro_schema, data_path, formatted_name)
-
-
-
-
+    write_dataframe_to_avro(combined_df, avro_schema, data_path, formatted_name)

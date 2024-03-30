@@ -36,6 +36,11 @@ echo "Creating lookup tables avro files..."
 python -c 'from csv_loader import create_lookup_avros; create_lookup_avros("'$DATA_PATH'")'
 echo "Creation of lookup tables avro files completed"
 
+echo "=========="
+echo "Creating external avro files..."
+python -c 'from web_loader import create_external_avro; create_external_avro("'$DATA_PATH'")'
+echo "Creation of external avro files completed"
+
 # Upload the Avro files to HDFS
 echo "=========="
 echo "Uploading Avro files to HDFS..."

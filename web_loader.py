@@ -1,29 +1,35 @@
 import requests
 import pandas as pd
 from io import StringIO
+from csv_folder_loader import generate_avro_schema_from_df, write_dataframe_to_avro
 
+def is_valid_header(line):
+    return sum(1 for column in line.split(',') if not column.strip()) <= 1
+
+def max_commas(file):
+    return max(line.count(',') for line in file)
 
 def load_csv_and_set_header(url):
     response = requests.get(url)
-    if response.status_code == 200:
-        content = response.content.decode('utf-8')
-        # Automatically determine the line number where data starts
-        lines = content.splitlines()
-        for i, line in enumerate(lines):
-            if line.split(',')[0].strip().isdigit():
-                header_line = i - 1
-                break
-        df = pd.read_csv(StringIO(content), skiprows=header_line)
-        return df
-    else:
+    if response.status_code != 200:
         print(f"Failed to download the file. Status code: {response.status_code}")
         return None
 
+    content = response.content.decode('utf-8')
+    lines = content.splitlines()
+    max_commas_in_csv = max_commas(lines)
 
-url = 'https://www.idescat.cat/pub/?id=rfdbc&n=13301&geo=mun:080193&lang=en&f=csv'
-df_cleaned = load_csv_and_set_header(url)
+    for i, line in enumerate(lines):
+        if line.count(',') == max_commas_in_csv and is_valid_header(line):
+            df = pd.read_csv(StringIO(content), skiprows=i)
+            return df
+    return None
 
-if df_cleaned is not None:
-    print(df_cleaned.head())
-else:
-    print("Failed to process the CSV data.")
+def create_external_avro(data_path, url='https://www.idescat.cat/pub/?id=rfdbc&n=13301&geo=mun:080193&lang=en&f=csv', filename='bcn_income'):
+    df = load_csv_and_set_header(url)
+    if df is None:
+        print("Failed to process the CSV data.")
+        return
+
+    avro_schema = generate_avro_schema_from_df(df, filename)
+    write_dataframe_to_avro(df, avro_schema, data_path, filename)
