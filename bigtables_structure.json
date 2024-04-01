@@ -1,0 +1,68 @@
+{
+  "idealista": {
+    "cf1" : {
+      "qualifiers" : [
+        "column1",
+        "column2",
+        "column3"
+      ],
+      "max_versions": 3
+    },
+    "cf2" : {
+      "qualifiers" : [
+        "column4",
+        "column5",
+        "column6"
+      ],
+      "max_versions": 3
+    },
+    "cf3" : {
+      "qualifiers" : [
+        "column7",
+        "column8",
+        "column9"
+      ],
+      "max_versions": 3
+    }
+  },
+  "idealista_extended": {
+    "cf1" : {
+      "qualifiers" : [],
+      "max_versions": 3
+    },
+    "cf2" : {
+      "qualifiers" : [],
+      "max_versions": 3
+    }
+  },
+  "income_opendatabsc_extended": {
+    "cf1" : {
+      "qualifiers" : [],
+      "max_versions": 3
+    },
+    "cf2" : {
+      "qualifiers" : [],
+      "max_versions": 3
+    }
+  },
+  "opendatabcn_income": {
+    "cf1" : {
+      "qualifiers" : [],
+      "max_versions": 3
+    },
+    "cf2" : {
+      "qualifiers" : [],
+      "max_versions": 3
+    }
+  },
+  "property_tax": {
+    "cf1" : {
+      "qualifiers" : [],
+      "max_versions": 3
+    },
+    "cf2" : {
+      "qualifiers" : [],
+      "max_versions": 3
+    }
+  }
+}
