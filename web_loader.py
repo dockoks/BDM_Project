@@ -25,7 +25,7 @@ def load_csv_and_set_header(url):
             return df
     return None
 
-def create_external_avro(data_path, url='https://www.idescat.cat/pub/?id=rfdbc&n=13301&geo=mun:080193&lang=en&f=csv', filename='bcn_income'):
+def create_external_avro(data_path, url='https://www.idescat.cat/pub/?id=ibi&n=173&geo=mun:080193&lang=en&f=csv', filename='property_tax'):
     df = load_csv_and_set_header(url)
     if df is None:
         print("Failed to process the CSV data.")
