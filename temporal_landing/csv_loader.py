@@ -1,8 +1,7 @@
 import pandas as pd
 import glob
 import os
-from fastavro import writer, parse_schema
-from csv_folder_loader import generate_avro_schema_from_df, write_dataframe_to_avro
+from temporal_landing.csv_folder_loader import generate_avro_schema_from_df, write_dataframe_to_avro
 
 def create_lookup_avros(data_path):
     csv_directory_path = f'{data_path}/lookup_tables'

@@ -91,10 +91,15 @@ def read_avro_to_dataframe(avro_file_path):
 
     return pd.DataFrame(records)
 
+
 def reconcile_schemas(existing_df, new_df):
     merged_columns = set(existing_df.columns).union(set(new_df.columns))
     reconciled_df = pd.concat([existing_df, new_df], ignore_index=True).reindex(columns=merged_columns).fillna(np.nan)
     reconciled_df = reconciled_df.infer_objects(copy=False)
+
+    # Remove duplicates after merging
+    reconciled_df = reconciled_df.drop_duplicates()
+
     return reconciled_df
 
 def make_opendatabcn_avro(data_path, name='opendatabcn-income'):
@@ -107,7 +112,7 @@ def make_opendatabcn_avro(data_path, name='opendatabcn-income'):
     empty_df = make_empty_df(os.path.join(data_path, name))
     new_combined_df = process_csvs(os.path.join(data_path, name), empty_df)
 
-    combined_df = reconcile_schemas(existing_df, new_combined_df)
+    # combined_df = reconcile_schemas(existing_df, new_combined_df)
 
-    avro_schema = generate_avro_schema_from_df(combined_df, formatted_name)
-    write_dataframe_to_avro(combined_df, avro_schema, data_path, formatted_name)
+    avro_schema = generate_avro_schema_from_df(new_combined_df, formatted_name)
+    write_dataframe_to_avro(new_combined_df, avro_schema, data_path, formatted_name)

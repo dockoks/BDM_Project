@@ -1,7 +1,7 @@
 import requests
 import pandas as pd
 from io import StringIO
-from csv_folder_loader import generate_avro_schema_from_df, write_dataframe_to_avro
+from temporal_landing.csv_folder_loader import generate_avro_schema_from_df, write_dataframe_to_avro
 
 def is_valid_header(line):
     return sum(1 for column in line.split(',') if not column.strip()) <= 1
@@ -25,7 +25,7 @@ def load_csv_and_set_header(url):
             return df
     return None
 
-def create_external_avro(data_path, url='https://www.idescat.cat/pub/?id=ibi&n=173&geo=mun:080193&lang=en&f=csv', filename='property_tax'):
+def create_external_avro(data_path, url='https://www.idescat.cat/pub/?id=irpf&n=4070&geo=mun:080193&lang=en&f=csv', filename='personal_income_tax'):
     df = load_csv_and_set_header(url)
     if df is None:
         print("Failed to process the CSV data.")
