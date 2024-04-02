@@ -1,57 +1,61 @@
 {
   "idealista": {
-    "cf1" : {
-      "qualifiers" : [
-        "column1",
-        "column2",
-        "column3"
-      ],
+    "location" : {
+      "qualifiers" : ["address", "province", "municipality", "district", "country", "neighborhood", "latitude", "longitude", "showAddress"],
       "max_versions": 3
     },
-    "cf2" : {
-      "qualifiers" : [
-        "column4",
-        "column5",
-        "column6"
-      ],
+    "description" : {
+      "qualifiers" : ["numPhotos", "propertyCode", "floor", "price", "propertyType", "operation", "size", "exterior", "rooms", "bathrooms", "distance", "hasVideo", "status", "newDevelopment", "hasLift", "priceByArea", "hasPlan", "has3DTour", "has360", "hasStaging", "topNewDevelopment", "newDevelopmentFinished"],
       "max_versions": 3
     },
-    "cf3" : {
-      "qualifiers" : [
-        "column7",
-        "column8",
-        "column9"
-      ],
+    "parkingSpace" : {
+      "qualifiers" : ["hasParkingSpace", "isParkingSpaceIncludedInPrice", "parkingSpacePrice"],
+      "max_versions": 3
+    },
+    "suggestedTexts" : {
+      "qualifiers" : ["subtitle", "title"],
+      "max_versions": 3
+    },
+    "detailedType" : {
+      "qualifiers" : ["typology", "subTypology"],
+      "max_versions": 3
+    },
+    "miscellaneous" : {
+      "qualifiers" : ["thumbnail", "externalReference", "url", "publication_date"],
       "max_versions": 3
     }
   },
   "idealista_extended": {
-    "cf1" : {
-      "qualifiers" : [],
+    "District" : {
+      "qualifiers" : ["Name", "NameReconciled", "NameLowercase", "ID"],
       "max_versions": 3
     },
-    "cf2" : {
-      "qualifiers" : [],
+    "Neighbourhood" : {
+      "qualifiers" : ["Name", "NameReconciled", "NameLowercase", "ID"],
       "max_versions": 3
     }
   },
   "income_opendatabsc_extended": {
-    "cf1" : {
-      "qualifiers" : [],
+    "District" : {
+      "qualifiers" : ["Name", "NameReconciled", "NameLowercase", "ID"],
       "max_versions": 3
     },
-    "cf2" : {
-      "qualifiers" : [],
+    "Neighbourhood" : {
+      "qualifiers" : ["Name", "NameReconciled", "NameLowercase", "ID"],
       "max_versions": 3
     }
   },
   "opendatabcn_income": {
-    "cf1" : {
-      "qualifiers" : [],
+    "District" : {
+      "qualifiers" : ["Name", "Code"],
       "max_versions": 3
     },
-    "cf2" : {
-      "qualifiers" : [],
+    "Neighbourhood" : {
+      "qualifiers" : ["Name", "Code"],
+      "max_versions": 3
+    },
+    "Statistics" : {
+      "qualifiers" : ["Índex RFD Barcelona", "Població", "Year"],
       "max_versions": 3
     }
   },

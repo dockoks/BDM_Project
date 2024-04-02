@@ -1,37 +1,24 @@
-import happybase
+import requests
+import json
 
+HBASE_IP = '10.4.41.52'
+HBASE_REST_PORT = 8080
+HBASE_USER = 'bdm'  # Replace with your HBase username
+HBASE_PASSWORD = 'bdm'  # Replace with your HBase password
 
-def connect_to_hbase(host, port=9090):
-    try:
-        connection = happybase.Connection(host, port)
-        connection.open()
-        print("Connected to HBase on {}:{}".format(host, port))
-        return connection
-    except Exception as e:
-        print("Failed to connect to HBase: ", e)
-        return None
+def list_hbase_tables_rest():
+    url = f'http://{HBASE_IP}:{HBASE_REST_PORT}/'
+    headers = {'Accept': 'application/json'}
+    response = requests.get(url, headers=headers, auth=(HBASE_USER, HBASE_PASSWORD))
 
-
-def list_hbase_tables(connection):
-    if connection:
-        tables = connection.tables()
+    if response.status_code == 200:
+        tables = response.json()['table']
         print("HBase Tables:", tables)
-
+    else:
+        print("Failed to list HBase tables: Status Code", response.status_code)
 
 def main():
-    host = '10.4.41.52'  # Replace with your HBase host
-    port = 8080  # Replace with your HBase Thrift server port if it's not the default
-
-    # Connect to HBase
-    connection = connect_to_hbase(host, port)
-
-    # List tables
-    if connection:
-        list_hbase_tables(connection)
-        connection.close()
-    else:
-        print("No connection to HBase.")
-
+    list_hbase_tables_rest()
 
 if __name__ == "__main__":
     main()
