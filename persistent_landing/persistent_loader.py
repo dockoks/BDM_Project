@@ -6,8 +6,8 @@ from avro.datafile import DataFileReader
 from avro.io import DatumReader
 import json
 from tqdm import tqdm
+import xml.etree.ElementTree as ET
 
-# Set HDFS cluster connection details
 HDFS_IP = '10.4.41.52'
 HDFS_PORT = 9870
 HDFS_USER = 'bdm'
@@ -31,21 +31,19 @@ def read_avro_file_contents_from_hdfs(filename):
     reader.close()
     return avro_schema, avro_data
 
-def get_data():
-    avro_files_data = {}  # Dictionary to store Avro file data
-    client = PyWebHdfsClient(host=HDFS_IP, port=HDFS_PORT, user_name=HDFS_USER, timeout=None)
-    files = client.list_dir(HDFS_AVRO_PATH)['FileStatuses']['FileStatus']
-    avro_files = [file['pathSuffix'] for file in files if file['type'] == 'FILE' and file['pathSuffix'].endswith('.avro')]
+def get_table_names():
+    url = f'http://{HBASE_IP}:{HBASE_REST_PORT}/'
+    response = requests.get(url)
 
-    for avro_file in avro_files:
-        avro_schema, avro_data = read_avro_file_contents_from_hdfs(avro_file)
-        avro_files_data[avro_file] = {'schema': avro_schema, 'data': avro_data}
+    if response.status_code != 200:
+        print(f"Failed to retrieve table names: Status Code {response.status_code}, Response: {response.text}")
+        return []
 
-    return avro_files_data
-
+    # Decode the byte string and split it into a list
+    table_names = response.content.decode('utf-8').strip().split('\n')
+    return table_names
 
 def delete_hbase_table(table_name):
-    # Make request to delete table using HBase REST API
     url = f'http://{HBASE_IP}:{HBASE_REST_PORT}/{table_name}/schema'
     response = requests.delete(url)
 
@@ -64,7 +62,6 @@ def create_hbase_table(table_name, column_families):
         "ColumnSchema": []
     }
 
-    # Iterate over column families
     for cf_name, cf_data in column_families.items():
 
         column_family = {
@@ -135,8 +132,6 @@ def process_avro_file_and_insert_data(table_name, avro_file, cf_structure, row_s
 
         insert_into_hbase_table(table_name, str(row_key), hbase_data)
 
-    return record_index
-
 
 def main():
     with open('persistent_landing/bigtables_structure.json', 'r') as json_file:
@@ -144,7 +139,15 @@ def main():
 
     print("==========")
 
-    for table_name in tables_structure.keys():
+    existing_table_names = set(get_table_names())
+    configured_table_names = set(tables_structure.keys())
+
+    tables_to_delete = existing_table_names - configured_table_names
+    for table_name in tables_to_delete:
+        delete_hbase_table(table_name)
+
+    tables_to_create = configured_table_names - existing_table_names
+    for table_name in tables_to_create:
         create_hbase_table(table_name, tables_structure[table_name]['families'])
 
     print("==========")
@@ -156,7 +159,7 @@ def main():
     avro_files = avro_files[::-1]
 
     for avro_file in avro_files:
-        table_name = avro_file.split('.')[0]  # Extract table name from Avro file name
+        table_name = avro_file.split('.')[0]
         if table_name in tables_structure:
             print(f"Processing file: {avro_file} for table: {table_name}")
             table_config = tables_structure[table_name]
