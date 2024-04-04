@@ -45,7 +45,7 @@ echo "Creation of external avro files completed"
 # TEMPORAL LANDING ZONE
 echo "=========="
 echo "Uploading Avro files to HDFS..."
-python -c 'from temporal_landing.temporal_loader import upload_avro_to_hdfs; upload_avro_to_hdfs("'"$AVRO_DATA_PATH"'", "'"$HDFS_USER"'", "'"$HDFS_PASSWORD"'", "'"$HDFS_IP"'", "'"$HDFS_PORT"'", "'"$HDFS_AVRO_PATH"'")'
+python -c 'from temporal_landing.temporal_loader_unix import upload_avro_to_hdfs; upload_avro_to_hdfs("'"$AVRO_DATA_PATH"'", "'"$HDFS_USER"'", "'"$HDFS_PASSWORD"'", "'"$HDFS_IP"'", "'"$HDFS_PORT"'", "'"$HDFS_AVRO_PATH"'")'
 echo "Upload finished"
 
 # PERSISTENT LANDING ZONE
