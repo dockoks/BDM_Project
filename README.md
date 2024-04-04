@@ -9,18 +9,18 @@ Our primary data source is the "Personal Income Tax" table from the Statistical 
 ## Data Collectors
 The data collection phase is powered by multiple Python scripts:
 
-- **`json_folder_loader.py`**: Processes JSON files from Idealista, adding a `publication_date` column, and merges them into a single JSON object before converting to Avro format.
+- `json_folder_loader.py`: Processes JSON files from Idealista, adding a `publication_date` column, and merges them into a single JSON object before converting to Avro format.
 
 
-- **`csv_folder_loader.py`**: Similar to the JSON loader, this script works with CSV files, storing the combined data in a Pandas DataFrame, followed by Avro conversion.
+- `csv_folder_loader.py`: Similar to the JSON loader, this script works with CSV files, storing the combined data in a Pandas DataFrame, followed by Avro conversion.
 
 
-- **`csv_loader.py` & `temporal_loader.py`**: These scripts facilitate the loading of lookup tables and the uploading of Avro files to the HDFS cluster.
+- `csv_loader.py` & `temporal_loader.py`: These scripts facilitate the loading of lookup tables and the uploading of Avro files to the HDFS cluster.
 
 ## Data Persistent Loader
 The project employs a single Python script alongside a JSON file (`bigtables_structure.json`) to design and create HBase big tables’ schemas.
 
-**`persistent_loader.py`**: This script orchestrates the creation of big tables in HBase, leveraging the REST API, and populates these tables with data from Avro files.
+`persistent_loader.py`: This script orchestrates the creation of big tables in HBase, leveraging the REST API, and populates these tables with data from Avro files.
 
 ## Running Instructions
 To execute the data pipeline:
