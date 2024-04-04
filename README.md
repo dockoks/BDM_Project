@@ -1,9 +1,5 @@
-## Overall pipeline schema
-
-![Diagram](images/diagram.svg)
-
 ## Overview
-This repository contains a comprehensive Big Data Management Backbone project, meticulously crafted by Danila Kokin (danila.kokin@estudiantat.upc.edu) and Dmitriy Chukhray (dmitriy.chukhray@estudiantat.upc.edu). It is designed to seamlessly integrate and process large-scale data, providing an efficient and automated data pipeline from collection to storage.
+This repository contains a comprehensive Big Data Management Backbone project, meticulously crafted by Danila Kokin and Dmitriy Chukhray. It is designed to seamlessly integrate and process large-scale data, providing an efficient and automated data pipeline from collection to storage.
 
 ## Data Sources
 Our primary data source is the "Personal Income Tax" table from the Statistical Institute of Catalonia, encompassing data from 2000-2021. This data is critical for our project's second phase, where we delve into descriptive statistical analysis and predictive modeling. 
@@ -33,6 +29,10 @@ To execute the data pipeline:
 2. Ensure that the script points to the correct folder containing the necessary data files.
 
 **Note**: The shell script is tailored for UNIX systems (macOS or Linux). Running it on Windows might require minor adjustments.
+
+## Overall pipeline schema
+
+![Diagram](images/diagram.svg)
 
 ## Contact
 
