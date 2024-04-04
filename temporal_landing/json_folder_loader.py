@@ -2,13 +2,13 @@ from fastavro import writer, parse_schema
 import os
 import json
 
-#extract the name of the file
+# extract the name of the file
 def extract_date_from_filename(filename):
     base_name = os.path.basename(filename)
     date_part = base_name.split('_')[:3]
     return '-'.join(date_part)
 
-#merge all the jsons files into one
+# merge all the jsons files into one
 def merge_jsons(directory_path):
     merged_data = []
     for filename in os.listdir(directory_path):

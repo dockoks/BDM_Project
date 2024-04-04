@@ -42,14 +42,14 @@ echo "Creating external avro files..."
 python -c 'from temporal_landing.external_data_loader import create_external_avro; create_external_avro("'$DATA_PATH'")'
 echo "Creation of external avro files completed"
 
-# TEMPORAL LENDING ZONE
+# TEMPORAL LANDING ZONE
 echo "=========="
 echo "Uploading Avro files to HDFS..."
 python -c 'from temporal_landing.temporal_loader import upload_avro_to_hdfs; upload_avro_to_hdfs("'"$AVRO_DATA_PATH"'", "'"$HDFS_USER"'", "'"$HDFS_PASSWORD"'", "'"$HDFS_IP"'", "'"$HDFS_PORT"'", "'"$HDFS_AVRO_PATH"'")'
 echo "Upload finished"
 
-# PERSISTENT LENDING ZONE
+# PERSISTENT LANDING ZONE
 echo "=========="
 echo "Connecting to HBase..."
-python -c 'from persistent_landing.persistent_loader import main; main()'
+python -c 'from persistent_landing.persistent_loader import load_hbase_tables; load_hbase_tables("'"$HDFS_IP"'", "'"$HDFS_USER"'", "'"$HDFS_PORT"'", "'"$HDFS_AVRO_PATH"'", "'"$HBASE_IP"'", "'"$HBASE_REST_PORT"'")'
 echo "Connection closed"

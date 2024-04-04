@@ -1,8 +1,7 @@
-import os
 import pandas as pd
-import numpy as np
-from fastavro import writer, parse_schema, reader
 import logging
+import os
+from fastavro import writer, parse_schema
 
 pd.set_option('future.no_silent_downcasting', True)
 
@@ -29,6 +28,7 @@ def process_csvs(filepath, combined_df):
     combined_df = combined_df.drop_duplicates()
     return combined_df
 
+# Convert data types to AVRO file data types
 def infer_avro_type(value):
     if pd.isna(value):
         return 'null'
@@ -43,6 +43,7 @@ def infer_avro_type(value):
     else:
         return 'string'
 
+# Create AVRO schema from a df with the given name
 def generate_avro_schema_from_df(df, name):
     schema = {
         'type': 'record',
@@ -52,12 +53,11 @@ def generate_avro_schema_from_df(df, name):
 
     for column in df.columns:
         unique_types = {infer_avro_type(value) for value in df[column]}
-        unique_types.add('null')  # Explicitly add 'null' to each field
+        unique_types.add('null')
         if len(unique_types) == 1 and 'null' in unique_types:
             field_type = 'null'
         else:
             field_type = sorted(list(unique_types))
-
         field = {
             'name': column,
             'type': field_type
@@ -66,6 +66,7 @@ def generate_avro_schema_from_df(df, name):
 
     return schema
 
+# Write df to AVRO file
 def write_dataframe_to_avro(df, schema, data_path, filename):
     try:
         avro_dir = os.path.join(data_path, 'avro')
@@ -80,39 +81,13 @@ def write_dataframe_to_avro(df, schema, data_path, filename):
     except Exception as e:
         logging.error(f"Error writing {filename} to Avro: {e}")
 
-def read_avro_to_dataframe(avro_file_path):
-    if not os.path.exists(avro_file_path):
-        return pd.DataFrame()
-
-    records = []
-    with open(avro_file_path, 'rb') as avro_file:
-        for record in reader(avro_file):
-            records.append(record)
-
-    return pd.DataFrame(records)
-
-
-def reconcile_schemas(existing_df, new_df):
-    merged_columns = set(existing_df.columns).union(set(new_df.columns))
-    reconciled_df = pd.concat([existing_df, new_df], ignore_index=True).reindex(columns=merged_columns).fillna(np.nan)
-    reconciled_df = reconciled_df.infer_objects(copy=False)
-
-    # Remove duplicates after merging
-    reconciled_df = reconciled_df.drop_duplicates()
-
-    return reconciled_df
-
 def make_opendatabcn_avro(data_path, name='opendatabcn-income'):
     avro_dir = os.path.join(data_path, 'avro')
     os.makedirs(avro_dir, exist_ok=True)
     formatted_name = name.replace('-', '_')
-    avro_file_path = os.path.join(avro_dir, f'{formatted_name}.avro')
 
-    existing_df = read_avro_to_dataframe(avro_file_path)
     empty_df = make_empty_df(os.path.join(data_path, name))
     new_combined_df = process_csvs(os.path.join(data_path, name), empty_df)
-
-    # combined_df = reconcile_schemas(existing_df, new_combined_df)
 
     avro_schema = generate_avro_schema_from_df(new_combined_df, formatted_name)
     write_dataframe_to_avro(new_combined_df, avro_schema, data_path, formatted_name)
